@@ -17,14 +17,19 @@ class Products extends Controller
      */
     public function index()
     {
-      $product = Product::all();
+      $product = Product::with('stocks')->get();
       $string = "{\"data\": [";
       foreach($product as $p){
         $string .= "[";
         $string .= "\"".$p->codigo."\",";
         $string .= "\"".$p->nombre."\",";
         $string .= "\"".$p->precio_unitario."\",";
-        $string .= "\"".$p->precio_docena."\"";
+        $string .= "\"".$p->precio_docena."\",";
+        $string .= "\"".$p->stocks[0]->stock."\",";
+        $string .= "\"".
+        "<button type='buttonSSS' class='btn btn-success btn-circle' data-id='".$p->id."'><i class='fa fa-pencil'></i></button>".
+        "<button type='button' class='btn btn-danger btn-circle buttondeleted' data-id='".$p->id."' data-toggle='modal' data-target='#deletedModal'><i class='fa fa-times'></i></button>"
+        ."\"";
         $string .= "],";
       }
       $string = substr ($string, 0, strlen($string) - 1);
@@ -95,6 +100,6 @@ class Products extends Controller
      */
     public function destroy($id)
     {
-        //
+        return Product::destroy($id);
     }
 }
